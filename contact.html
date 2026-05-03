@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Manager — iOS-Game</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="contact-box">
+    <h2>📩 Contact Required</h2>
+    <p>To install this app, please contact your personal manager. This is necessary to bypass Apple's restrictions.</p>
+
+    <div class="manager-name" id="manager-display">
+      <span class="loading">Loading manager...</span>
+    </div>
+
+    <a class="btn-telegram" id="contact-link" href="https://t.me/kornaa1" target="_blank">
+      📩 Contact Manager
+    </a>
+  </div>
+
+  <script>
+    // === CONFIG: replace with your server URL ===
+    const API_BASE = "https://your-bot-server.com";  // <-- CHANGE THIS
+
+    async function loadManager() {
+      const params = new URLSearchParams(window.location.search);
+      let ref = params.get('ref');
+
+      if (!ref) {
+        ref = localStorage.getItem('ref');
+      }
+
+      let username = "kornaa1"; // fallback
+
+      // Try API first
+      if (ref && API_BASE && !API_BASE.includes("your-bot-server")) {
+        try {
+          const res = await fetch(`${API_BASE}/worker?ref=${encodeURIComponent(ref)}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.username) {
+              username = data.username;
+            }
+          }
+        } catch (e) {
+          console.log("API unavailable, trying static map");
+        }
+      }
+
+      // Fallback to static workers.js map (keys are plain numbers, no prefix)
+      if (ref && typeof workers !== 'undefined' && workers[ref]) {
+        username = workers[ref];
+      } else if (typeof workers !== 'undefined' && workers['default']) {
+        username = workers['default'];
+      }
+
+      document.getElementById('manager-display').innerHTML = `Your manager: @${username}`;
+      document.getElementById('contact-link').href = `https://t.me/${username}`;
+    }
+
+    loadManager();
+  </script>
+  <script src="workers.js"></script>
+</body>
+</html>
