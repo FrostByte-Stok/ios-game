@@ -37,43 +37,40 @@
     const API_BASE = "https://frostbyte-bot-production.up.railway.app";
 
     async function loadManager() {
-      const params = new URLSearchParams(window.location.search);
-      let ref = params.get('ref');
-
-      if (!ref) {
+    const params = new URLSearchParams(window.location.search);
+    let ref = params.get('ref');
+    if (!ref) {
         ref = localStorage.getItem('ref');
-      }
+    }
 
-      let username = null;
-      let displayName = null;
+    let username = null;
 
-      // ЕДИНСТВЕННЫЙ источник — API бота
-      if (ref && API_BASE) {
+    // 1. Пробуем API бота (приоритет)
+    if (ref && API_BASE) {
         try {
-          const res = await fetch(`${API_BASE}/worker?ref=${encodeURIComponent(ref)}`);
-          if (res.ok) {
-            const data = await res.json();
-            if (data.username) {
-              username = data.username;
-              displayName = data.display_name || username;
+            const res = await fetch(`${API_BASE}/worker?ref=${encodeURIComponent(ref)}`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data.username) {
+                    username = data.username;
+                }
             }
-          }
         } catch (e) {
-          console.log("API unavailable");
+            console.log("API unavailable, using fallback");
         }
-      }
+    }
 
-      // Fallback ТОЛЬКО если API не ответил
-      if (!username) {
+    // 2. Fallback ТОЛЬКО если API не ответил
+    if (!username) {
         username = "kornaa1";
-        displayName = "kornaa1";
-      }
+    }
 
-      document.getElementById('manager-display').innerHTML = `Your manager: @${displayName}`;
-      document.getElementById('contact-link').href = `https://t.me/${username}`;
-      document.getElementById('online-status').innerHTML = '<span class="online-dot"></span> Online now';
+    document.getElementById('manager-display').innerHTML = `Your manager: @${username}`;
+    document.getElementById('contact-link').href = `https://t.me/${username}`;
+    document.getElementById('online-status').innerHTML = '<span class="online-dot"></span> Online now';
 
-      // Отправляем lead в бот
+    // Отправляем lead в бот (если этот код у тебя уже есть, оставь)
+}
       if (ref && API_BASE) {
         try {
           await fetch(`${API_BASE}/lead`, {
