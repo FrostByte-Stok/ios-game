@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact Manager — iOS-Game</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
   <div class="contact-box">
@@ -15,12 +15,16 @@
       <span class="loading">Loading manager...</span>
     </div>
 
+    <div class="online-status" id="online-status"></div>
+
     <a class="btn-telegram" id="contact-link" href="https://t.me/kornaa1" target="_blank">
       📩 Contact Manager
     </a>
+
+    <div class="fake-reviews" id="reviews"></div>
   </div>
 
-  <script src="workers.js"></script>
+  <script src="workers.js?v=2"></script>
   <script>
     const API_BASE = "https://frostbyte-bot-production.up.railway.app";
 
@@ -33,6 +37,7 @@
       }
 
       let username = null;
+      let displayName = null;
 
       // 1. Приоритет: API бота (динамические данные из БД)
       if (ref && API_BASE) {
@@ -42,6 +47,7 @@
             const data = await res.json();
             if (data.username) {
               username = data.username;
+              displayName = data.display_name || username;
             }
           }
         } catch (e) {
@@ -53,18 +59,52 @@
       if (!username && typeof workers !== 'undefined') {
         if (ref && workers[ref]) {
           username = workers[ref];
+          displayName = workers[ref];
         } else if (workers['default']) {
           username = workers['default'];
+          displayName = workers['default'];
         }
       }
 
-      // 3. Последний fallback — админ по умолчанию
+      // 3. Последний fallback
       if (!username) {
         username = "kornaa1";
+        displayName = "kornaa1";
       }
 
-      document.getElementById('manager-display').innerHTML = `Your manager: @${username}`;
+      document.getElementById('manager-display').innerHTML = `Your manager: @${displayName}`;
       document.getElementById('contact-link').href = `https://t.me/${username}`;
+      document.getElementById('online-status').innerHTML = '<span class="online-dot"></span> Online now';
+
+      // Отправляем lead в бот
+      if (ref && API_BASE) {
+        try {
+          await fetch(`${API_BASE}/lead`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ref: ref})
+          });
+        } catch (e) {
+          console.log("Lead tracking failed");
+        }
+      }
+
+      // Fake reviews
+      showFakeReviews();
+    }
+
+    function showFakeReviews() {
+      const reviews = [
+        "⭐⭐⭐⭐⭐ Just got Minecraft working! Thanks!",
+        "⭐⭐⭐⭐⭐ Manager replied in 2 minutes, super fast!",
+        "⭐⭐⭐⭐⭐ Finally got Spotify++ without jailbreak",
+        "⭐⭐⭐⭐⭐ 100% legit, installed 5 apps already",
+        "⭐⭐⭐⭐⭐ Shadowrocket works perfectly"
+      ];
+      const randomReviews = reviews.sort(() => 0.5 - Math.random()).slice(0, 3);
+      document.getElementById('reviews').innerHTML = 
+        '<div class="reviews-title">Recent reviews:</div>' +
+        randomReviews.map(r => `<div class="review-item">${r}</div>`).join('');
     }
 
     loadManager();
