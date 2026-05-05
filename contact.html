@@ -20,9 +20,9 @@
     </a>
   </div>
 
+  <script src="workers.js"></script>
   <script>
-    // === CONFIG: replace with your server URL ===
-    const API_BASE = "https://your-bot-server.com";  // <-- CHANGE THIS
+    const API_BASE = "https://frostbyte-bot-production.up.railway.app";
 
     async function loadManager() {
       const params = new URLSearchParams(window.location.search);
@@ -32,10 +32,9 @@
         ref = localStorage.getItem('ref');
       }
 
-      let username = "kornaa1"; // fallback
+      let username = "kornaa1";
 
-      // Try API first
-      if (ref && API_BASE && !API_BASE.includes("your-bot-server")) {
+      if (ref && API_BASE) {
         try {
           const res = await fetch(`${API_BASE}/worker?ref=${encodeURIComponent(ref)}`);
           if (res.ok) {
@@ -45,11 +44,10 @@
             }
           }
         } catch (e) {
-          console.log("API unavailable, trying static map");
+          console.log("API unavailable, using static map");
         }
       }
 
-      // Fallback to static workers.js map (keys are plain numbers, no prefix)
       if (ref && typeof workers !== 'undefined' && workers[ref]) {
         username = workers[ref];
       } else if (typeof workers !== 'undefined' && workers['default']) {
@@ -62,6 +60,5 @@
 
     loadManager();
   </script>
-  <script src="workers.js"></script>
 </body>
 </html>
