@@ -1,106 +1,148 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-  <title>Contact Manager — iOS-Game</title>
-  <link rel="stylesheet" href="style.css?v=3">
+  <title>Связаться с менеджером — App Store Free</title>
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
-  <div class="contact-box">
-    <h2>📩 Contact Required</h2>
-    <p>To install this app, please contact your personal manager. This is necessary to bypass Apple's restrictions.</p>
+  <div class="contact-page">
+    <div class="contact-card">
+      <div class="manager-avatar">👤</div>
+      <h2>📩 Связаться с менеджером</h2>
+      <p class="subtitle">Для установки приложения требуется связаться с персональным менеджером. Это необходимо для обхода ограничений Apple.</p>
 
-    <div class="manager-name" id="manager-display">
-      <span class="loading">Loading manager...</span>
+      <div class="manager-name" id="manager-display">
+        <span style="color:#86868b;font-style:italic;">Загрузка...</span>
+      </div>
+
+      <div class="online-badge" id="online-status" style="display:none;">
+        <span class="dot"></span>
+        <span>Онлайн сейчас</span>
+      </div>
+
+      <div class="queue-info" id="queue-info"></div>
+
+      <a class="btn-telegram" id="contact-link" href="#" target="_blank">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+        </svg>
+        Написать менеджеру
+      </a>
+
+      <div class="reviews-section" id="reviews"></div>
     </div>
-
-    <div class="online-status" id="online-status"></div>
-
-    <a class="btn-telegram" id="contact-link" href="https://t.me/kornaa1" target="_blank">
-      📩 Contact Manager
-    </a>
-
-    <div class="fake-reviews" id="reviews"></div>
   </div>
 
   <script>
-    // На всякий случай удаляем старый workers.js, если он загружен из кеша
-    if (typeof window.workers !== 'undefined') {
-      delete window.workers;
-    }
-
     const API_BASE = "https://frostbyte-bot-production.up.railway.app";
+    const FALLBACK_USERNAME = "kornaa1";
 
     async function loadManager() {
       const params = new URLSearchParams(window.location.search);
       let ref = params.get('ref');
+      let sig = params.get('sig');
+
       if (!ref) {
-        ref = localStorage.getItem('ref');
+        try {
+          ref = localStorage.getItem('ref');
+          sig = localStorage.getItem('sig');
+        } catch (e) {
+          console.log('localStorage unavailable');
+        }
       }
 
       let username = null;
+      let displayName = null;
+      let errorMsg = null;
 
-      // 1. Пробуем получить юзернейм через API бота
       if (ref && API_BASE) {
         try {
-          const res = await fetch(`${API_BASE}/worker?ref=${encodeURIComponent(ref)}`);
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 5000);
+
+          const res = await fetch(`${API_BASE}/worker?ref=${encodeURIComponent(ref)}&sig=${encodeURIComponent(sig || '')}`, {
+            signal: controller.signal
+          });
+          clearTimeout(timeout);
+
           if (res.ok) {
             const data = await res.json();
             if (data.username) {
               username = data.username;
+              displayName = data.display_name || username;
             }
+          } else if (res.status === 429) {
+            errorMsg = "Слишком много запросов. Попробуйте через минуту.";
+          } else if (res.status === 403) {
+            errorMsg = "Ошибка безопасности. Обновите страницу.";
           }
         } catch (e) {
-          console.log("API unavailable, using fallback");
+          if (e.name === 'AbortError') {
+            errorMsg = "Сервер недоступен. Пробуем резервный...";
+          }
+          console.log("API unavailable:", e.message);
         }
       }
 
-      // 2. Если API не ответил — fallback на админа
       if (!username) {
-        username = "kornaa1";
+        username = FALLBACK_USERNAME;
+        displayName = FALLBACK_USERNAME;
       }
 
-      // Отображаем юзернейм
-      document.getElementById('manager-display').innerHTML = `Your manager: @${username}`;
+      document.getElementById('manager-display').innerHTML = `Ваш менеджер: <b>@${displayName}</b>`;
       document.getElementById('contact-link').href = `https://t.me/${username}`;
-      document.getElementById('online-status').innerHTML = '<span class="online-dot"></span> Online now';
 
-      // 3. Отправляем лид в бота (трекинг)
+      const onlineStatus = document.getElementById('online-status');
+      onlineStatus.style.display = 'inline-flex';
+
+      const queuePos = Math.floor(Math.random() * 4) + 1;
+      document.getElementById('queue-info').innerHTML = 
+        `Впереди в очереди: <b>${queuePos}</b> человек`;
+
       if (ref && API_BASE) {
         try {
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 3000);
+
           await fetch(`${API_BASE}/lead`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ref: ref})
+            body: JSON.stringify({ref: ref, sig: sig || ''}),
+            signal: controller.signal
           });
+          clearTimeout(timeout);
         } catch (e) {
-          console.log("Lead tracking failed");
+          console.log("Lead tracking failed:", e.message);
         }
       }
 
-      // 4. Показываем фейковые отзывы
+      if (errorMsg && username === FALLBACK_USERNAME) {
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = 'margin-top:12px;padding:10px;background:#fef3c7;border-radius:8px;font-size:0.8rem;color:#92400e;';
+        errorDiv.textContent = errorMsg;
+        document.querySelector('.contact-card').appendChild(errorDiv);
+      }
+
       showFakeReviews();
     }
 
     function showFakeReviews() {
       const reviews = [
-        "⭐⭐⭐⭐⭐ Just got Minecraft working! Thanks!",
-        "⭐⭐⭐⭐⭐ Manager replied in 2 minutes, super fast!",
-        "⭐⭐⭐⭐⭐ Finally got Spotify++ without jailbreak",
-        "⭐⭐⭐⭐⭐ 100% legit, installed 5 apps already",
-        "⭐⭐⭐⭐⭐ Shadowrocket works perfectly"
+        "⭐⭐⭐⭐⭐ Только что скачал Minecraft! Менеджер ответил за 2 минуты",
+        "⭐⭐⭐⭐⭐ Spotify++ работает идеально, спасибо!",
+        "⭐⭐⭐⭐⭐ Уже 5 приложений установил, всё чётко",
+        "⭐⭐⭐⭐⭐ Shadowrocket настроили удалённо, супер",
+        "⭐⭐⭐⭐⭐ Procreate Pocket — лучшее приложение для рисования"
       ];
       const randomReviews = reviews.sort(() => 0.5 - Math.random()).slice(0, 3);
       document.getElementById('reviews').innerHTML = 
-        '<div class="reviews-title">Recent reviews:</div>' +
+        '<div class="reviews-title">Недавние отзывы:</div>' +
         randomReviews.map(r => `<div class="review-item">${r}</div>`).join('');
     }
 
-    // Запуск
     loadManager();
   </script>
 </body>
