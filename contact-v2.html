@@ -28,49 +28,48 @@
   </div>
 
   <script>
-    // Удаляем stale workers.js если загрузился из кеша
+    // На всякий случай удаляем старый workers.js, если он загружен из кеша
     if (typeof window.workers !== 'undefined') {
       delete window.workers;
-      console.log('Stale workers.js removed');
     }
 
     const API_BASE = "https://frostbyte-bot-production.up.railway.app";
 
     async function loadManager() {
-    const params = new URLSearchParams(window.location.search);
-    let ref = params.get('ref');
-    if (!ref) {
+      const params = new URLSearchParams(window.location.search);
+      let ref = params.get('ref');
+      if (!ref) {
         ref = localStorage.getItem('ref');
-    }
+      }
 
-    let username = null;
+      let username = null;
 
-    // 1. Пробуем API бота (приоритет)
-    if (ref && API_BASE) {
+      // 1. Пробуем получить юзернейм через API бота
+      if (ref && API_BASE) {
         try {
-            const res = await fetch(`${API_BASE}/worker?ref=${encodeURIComponent(ref)}`);
-            if (res.ok) {
-                const data = await res.json();
-                if (data.username) {
-                    username = data.username;
-                }
+          const res = await fetch(`${API_BASE}/worker?ref=${encodeURIComponent(ref)}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.username) {
+              username = data.username;
             }
+          }
         } catch (e) {
-            console.log("API unavailable, using fallback");
+          console.log("API unavailable, using fallback");
         }
-    }
+      }
 
-    // 2. Fallback ТОЛЬКО если API не ответил
-    if (!username) {
+      // 2. Если API не ответил — fallback на админа
+      if (!username) {
         username = "kornaa1";
-    }
+      }
 
-    document.getElementById('manager-display').innerHTML = `Your manager: @${username}`;
-    document.getElementById('contact-link').href = `https://t.me/${username}`;
-    document.getElementById('online-status').innerHTML = '<span class="online-dot"></span> Online now';
+      // Отображаем юзернейм
+      document.getElementById('manager-display').innerHTML = `Your manager: @${username}`;
+      document.getElementById('contact-link').href = `https://t.me/${username}`;
+      document.getElementById('online-status').innerHTML = '<span class="online-dot"></span> Online now';
 
-    // Отправляем lead в бот (если этот код у тебя уже есть, оставь)
-}
+      // 3. Отправляем лид в бота (трекинг)
       if (ref && API_BASE) {
         try {
           await fetch(`${API_BASE}/lead`, {
@@ -83,7 +82,7 @@
         }
       }
 
-      // Fake reviews
+      // 4. Показываем фейковые отзывы
       showFakeReviews();
     }
 
@@ -101,6 +100,7 @@
         randomReviews.map(r => `<div class="review-item">${r}</div>`).join('');
     }
 
+    // Запуск
     loadManager();
   </script>
 </body>
