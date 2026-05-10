@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подробнее — App Store Free</title>
+    <link rel="stylesheet" href="style.css?v=10">
+</head>
+<body>
+    <div class="app-store">
+        <header class="store-header" style="padding-bottom:8px;">
+            <div class="header-top">
+                <a href="index.html" class="logo" style="text-decoration:none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    <span>App Store</span>
+                </a>
+                <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">🌙</button>
+            </div>
+        </header>
+        <div class="detail-page" id="detail-page">
+            <a href="index.html" class="back-btn">← Назад к приложениям</a>
+            <div class="detail-hero">
+                <div class="detail-icon" id="detail-icon"></div>
+                <div class="detail-info">
+                    <h1 id="detail-name">Загрузка...</h1>
+                    <p id="detail-category" class="subtitle">...</p>
+                    <div class="detail-meta">
+                        <span class="rating" id="detail-rating">★ 0.0</span>
+                        <span class="downloads-counter" id="detail-downloads">⬇️ ...</span>
+                        <span class="price free">Бесплатно</span>
+                    </div>
+                </div>
+            </div>
+            <div class="detail-screenshots" id="detail-screenshots"></div>
+            <div class="detail-desc">
+                <h3>Описание</h3>
+                <p id="detail-desc-text">...</p>
+                <div class="detail-features" id="detail-features"></div>
+            </div>
+            <div class="detail-reviews">
+                <h3>Отзывы</h3>
+                <div class="reviews-list" id="reviews-list"></div>
+            </div>
+            <a class="banner-btn" id="detail-get-btn" href="#" style="display:block;text-align:center;margin:24px 0;">Скачать</a>
+        </div>
+        <footer class="store-footer"><p>© 2025 App Store Free</p></footer>
+    </div>
+    <script>
+        const appsData = {
+            minecraft: { name:"Minecraft", cat:"Sandbox", icon:"⛏️", rating:4.9, size:"234 MB", ver:"1.20.50", desc:"Полная версия Minecraft Pocket Edition с поддержкой 100+ модов. Мультиплеер, выживание, креатив и бескрайние миры без ограничений Apple.", features:["100+ модов","Мультиплеер","Без jailbreak"], iconUrl:"https://wallpapers.com/images/thumbnail/minecraft_-pocket_-edition_-logo-k3gtu1oy3tgrqii8.webp", screens:["https://content.instructables.com/FNF/DDHX/IC37G711/FNFDDHXIC37G711.jpg?auto=webp&fit=bounds&frame=1&height=1024&width=1024"] },
+            geometry: { name:"Geometry Dash", cat:"Ритм-экшен", icon:"🔷", rating:4.8, size:"89 MB", ver:"2.2", desc:"Ритм-платформер с невероятной сложностью. Все уровни открыты, кастомные скины и редактор уровней.", features:["Все уровни","Редактор","Кастомные скины"], iconUrl:"https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/5a/d5/97/5ad5971d-b8ea-d82f-415f-f69be6bde65c/AppIcon-1x_U007emarketing-0-11-0-85-220-0.png/256x256bb.jpg", screens:["https://cdn.mobygames.com/screenshots/16486096-geometry-dash-iphone-practice-mode.png","https://cdn.mobygames.com/screenshots/16486381-geometry-dash-iphone-gameplay.png"] },
+            gta: { name:"GTA: San Andreas", cat:"Экшен", icon:"🌴", rating:4.7, size:"2.1 GB", ver:"2.11", desc:"Легендарная GTA SA с HD-текстурами, читами и поддержкой модов. Полная русская локализация.", features:["HD-текстуры","Читы","Моды"], iconUrl:"https://img.icons8.com/ios7/1200/san-andreas.jpg", screens:["https://cdn.mobygames.com/screenshots/12137603-grand-theft-auto-san-andreas-iphone-groove-street.jpg"] },
+            stardew: { name:"Stardew Valley", cat:"Ферма RPG", icon:"🐔", rating:4.9, size:"180 MB", ver:"1.5.6", desc:"Уютная фермерская RPG с мультиплеером. Все DLC включены, русский язык.", features:["Мультиплеер","Все DLC","Русский язык"], iconUrl:"https://static.wikia.nocookie.net/logopedia/images/8/8e/Stardew_icon.png/revision/latest?cb=20260108212455", screens:["https://imageio.forbes.com/blogs-images/danidiplacido/files/2018/10/stardew-valley-ios.png?format=png&height=600&width=1200&fit=bounds"] },
+            deadcells: { name:"Dead Cells", cat:"Roguelike", icon:"⚔️", rating:4.8, size:"1.2 GB", ver:"3.3", desc:"Бесконечный roguelike-экшен с потрясающей боевой системой. Все DLC разблокированы.", features:["Все DLC","60 FPS","Контроллеры"], iconUrl:"https://cdn.iphoneincanada.ca/wp-content/uploads/2019/08/icon.png", screens:["https://cdn.toucharcade.com/wp-content/uploads/2022/05/dead-cells-mobile-dlc-review-2022-screenshot-gameplay-1.jpg","https://cdn.toucharcade.com/wp-content/uploads/2022/05/dead-cells-mobile-dlc-review-2022-screenshot-gameplay-3.jpg"] },
+            balatro: { name:"Balatro", cat:"Покер", icon:"🃏", rating:4.9, size:"120 MB", ver:"1.0", desc:"Рогалик-покер, который затягивает навсегда. Все колоды и джокеры открыты.", features:["Все колоды","Без рекламы","Оффлайн"], iconUrl:"https://cdn2.steamgriddb.com/icon/6c3ee6dcff80d34567671bce66bc911e/32/256x256.png", screens:["https://cdn.mobygames.com/screenshots/18275494-balatro-windows-main-menu.jpg"] },
+            ayugram: { name:"AyuGram", cat:"Telegram клиент", icon:"✈️", rating:4.6, size:"45 MB", ver:"10.5", desc:"Модифицированный Telegram с анти-удалением сообщений, призрачным режимом и темами.", features:["Анти-удаление","Призрачный режим","Темы"], iconUrl:"https://avatars.githubusercontent.com/u/131606289?s=280&v=4", screens:["https://techylist.com/wp-content/uploads/2024/11/Ayugram2-1.jpg","https://techylist.com/wp-content/uploads/2024/11/Ayugram1-1.jpg","https://techylist.com/wp-content/uploads/2024/11/Ayugram3-1.jpg","https://imag.malavida.com/mvimgbig/download-fs/ayugram-39865-1.jpg"] },
+            telegram: { name:"Telegram Mods", cat:"Модификации", icon:"🔒", rating:4.5, size:"42 MB", ver:"10.2", desc:"Сборка модифицированных Telegram-клиентов с расширенными настройками приватности.", features:["Приватность","Темы","Скрытые чаты"], iconUrl:"https://assets.streamlinehq.com/image/private/w_240,h_240,ar_1/f_auto/v1/icons/ios-icons/telegram-zsefsxqok2s3wcnwz2t8yl.png/telegram-frk4xndvnapf833cx6csyi.png?_a=DATAiZAAZAA0", screens:["http://tsfkb.wdfiles.com/local--files/screenshots:ios/81.jpg"] },
+            shadowrocket: { name:"Shadowrocket", cat:"VPN прокси", icon:"🚀", rating:4.7, size:"18 MB", ver:"2.2", desc:"Мощный VPN-клиент для iOS с поддержкой всех протоколов. Полная версия без подписок.", features:["Все протоколы","Без подписок","Быстрые сервера"], iconUrl:"https://custom-images.strikinglycdn.com/res/hrscywv4p/image/upload/c_limit,fl_lossy,h_300,w_300,f_auto,q_100/8422457/161884_342068.png", screens:["https://wiki.quicklian.com/images/ios/screenshots/shadowrocket-store.jpg","https://cdn.soft112.com/vpn-shadowrocket-hotspot-proxy-ios/00/00/0H/SI/00000HSIA1/pad_screenshot_4A5P8F3U0J.png"] },
+            spotify: { name:"Spotify++", cat:"Premium", icon:"🎵", rating:4.8, size:"45 MB", ver:"8.9", desc:"Spotify с Premium-функциями: бесконечные скипы, оффлайн-режим, высокое качество.", features:["Premium","Оффлайн","HQ звук"], iconUrl:"https://static.vecteezy.com/system/resources/previews/017/395/387/non_2x/spotify-mobile-apps-icon-free-png.png", screens:["https://raw.githubusercontent.com/AfrazCodes/Spotify-iOS/master/screenshots.png"] },
+            wolfram: { name:"WolframAlpha", cat:"Вычисления", icon:"🔢", rating:4.6, size:"15 MB", ver:"2.0", desc:"Мощный вычислительный движок. Решает математику, физику, химию и многое другое.", features:["Все функции","Оффлайн","Шаги решения"], iconUrl:"https://img.icons8.com/color/512w/wolfram-alpha.png", screens:["https://products.wolframalpha.com/_next/static/images/step-by-step_ff4b5d983d56361f1aec79b73b9e6969.png","https://content.wolfram.com/sites/39/2022/09/wa-ios2.1-hero.png","https://products.wolframalpha.com/_next/static/images/math-input-en_73ca922ec7cbbefbb16f657ae86963ba.png"] },
+            procreate: { name:"Procreate Pocket", cat:"Рисование", icon:"🎨", rating:4.9, size:"310 MB", ver:"4.0", desc:"Профессиональное приложение для рисования. Все кисти, слои и инструменты разблокированы.", features:["Все кисти","Слои","Экспорт PSD"], iconUrl:"https://cdn.jim-nielsen.com/ios/512/procreate-pocket-2018-08-03.png?rf=1024", screens:["https://www.carbodydesign.com/media/2015/06/Procreate-iPad-app-screenshot.jpg","https://www.carbodydesign.com/media/2015/06/Procreate-iPad-app-screenshot-2.jpg"] },
+            lumafusion: { name:"LumaFusion", cat:"Видео", icon:"🎬", rating:4.8, size:"180 MB", ver:"4.2", desc:"Профессиональный видеоредактор для iOS. 6 треков, хромакей, цветокоррекция.", features:["6 треков","Хромакей","4K экспорт"], iconUrl:"https://profilmmakerapps.com/images/lumafusion.jpg", screens:["https://3.img-dpreview.com/files/p/E~C0x87S1332x749T1200x675~articles/1126790213/LumaFusion.jpeg"] },
+            goodnotes: { name:"Goodnotes 6", cat:"Заметки", icon:"📝", rating:4.7, size:"95 MB", ver:"6.0", desc:"Лучшее приложение для заметок. Рукописный ввод, PDF-аннотации, планировщики.", features:["Рукопись","PDF","Планировщики"], iconUrl:"https://www.iphonejd.com/wp-content/uploads/2023/08/6a010535fde333970c02b751ae6870200c.png", screens:["https://developer.apple.com/articles/images/article-goodnotes_2x.png"] }
+        };
+
+        const reviewsDB = {
+            minecraft: [
+                {name:"Алексей К.", text:"Моды работают идеально, сервера не лагают. Установил через менеджера за 10 минут.", time:"2 часа назад", stars:5},
+                {name:"Мария С.", text:"Наконец-то нормальный Minecraft на iPhone! Все 100+ модов на месте.", time:"вчера", stars:5},
+                {name:"Дмитрий В.", text:"Думал развод, но всё честно. Мультиплеер работает без вылетов.", time:"3 дня назад", stars:5},
+                {name:"Анна П.", text:"Сын в восторге! Спасибо за помощь в установке.", time:"неделю назад", stars:5}
+            ],
+            geometry: [
+                {name:"Иван М.", text:"Все уровни открыты, кастомные скины качаются. Супер!", time:"1 час назад", stars:5},
+                {name:"Елена Р.", text:"Сложно, но затягивает. Редактор уровней работает на ура.", time:"вчера", stars:5},
+                {name:"Сергей Т.", text:"Лучший ритм-платформер на iOS. Без рекламы и лагов!", time:"2 дня назад", stars:5},
+                {name:"Ольга Н.", text:"Сын прошёл уже 50 уровней. Всё стабильно, рекомендую.", time:"5 дней назад", stars:4}
+            ],
+            gta: [
+                {name:"Максим Д.", text:"HD-текстуры реально улучшают картинку. Читы работают.", time:"3 часа назад", stars:5},
+                {name:"Кирилл В.", text:"Ностальгия! Русская озвучка на месте, всё как в оригинале.", time:"вчера", stars:5},
+                {name:"Никита П.", text:"Установил моды на машины — выглядит круче ремастера.", time:"4 дня назад", stars:5},
+                {name:"Елена С.", text:"Муж играет каждый вечер. Ни одного вылета за неделю.", time:"неделю назад", stars:5}
+            ],
+            stardew: [
+                {name:"Артём З.", text:"Уютная игра, мультиплеер работает отлично. Все DLC бесплатно!", time:"5 часов назад", stars:5},
+                {name:"Мария Л.", text:"Ферма, рыбалка, отношения с NPC — затягивает на сотни часов.", time:"вчера", stars:5},
+                {name:"Денис К.", text:"Русский язык вшит, не нужно ничего докачивать. Удобно.", time:"3 дня назад", stars:5},
+                {name:"София М.", text:"Играю с подругой по сети, никаких проблем с соединением.", time:"6 дней назад", stars:5}
+            ],
+            deadcells: [
+                {name:"Глеб Н.", text:"60 FPS стабильно, даже на старом iPhone. Все DLC разблокированы.", time:"2 часа назад", stars:5},
+                {name:"Анна В.", text:"Геймпад подключился без проблем. Игра бомба!", time:"вчера", stars:5},
+                {name:"Роман С.", text:"Рогалик от богов. Каждый забег уникальный.", time:"3 дня назад", stars:5},
+                {name:"Виктория П.", text:"Сложновато в начале, но потом не оторваться.", time:"5 дней назад", stars:4}
+            ],
+            balatro: [
+                {name:"Игорь М.", text:"Рогалик-покер — это гениально. Все колоды сразу доступны.", time:"1 час назад", stars:5},
+                {name:"Татьяна К.", text:"Затянуло на целый вечер. Оффлайн режим спасает в метро.", time:"вчера", stars:5},
+                {name:"Андрей Л.", text:"Без рекламы и доната. Чистый геймплей.", time:"2 дня назад", stars:5},
+                {name:"Юлия Н.", text:"Покер + карточные механики = идеальное сочетание.", time:"4 дня назад", stars:5}
+            ],
+            ayugram: [
+                {name:"Павел Р.", text:"Анти-удаление сообщений работает идеально. Наконец-то!", time:"3 часа назад", stars:5},
+                {name:"Ольга В.", text:"Призрачный режим — топ. Никто не видит что я онлайн.", time:"вчера", stars:5},
+                {name:"Константин М.", text:"Темы красивые, интерфейс плавный. Лучше оригинала.", time:"2 дня назад", stars:4},
+                {name:"Надежда С.", text:"Все чаты перенеслись без проблем. Рекомендую.", time:"5 дней назад", stars:5}
+            ],
+            telegram: [
+                {name:"Сергей А.", text:"Сборка из лучших модов. Приватность на высоте.", time:"4 часа назад", stars:5},
+                {name:"Алина К.", text:"Скрытые чаты с паролем — то что нужно для работы.", time:"вчера", stars:5},
+                {name:"Дмитрий О.", text:"Темы оформления огонь. Тёмная тема лучше официальной.", time:"3 дня назад", stars:5},
+                {name:"Екатерина Л.", text:"Работает быстрее обычного Telegram. Не тормозит.", time:"неделю назад", stars:4}
+            ],
+            shadowrocket: [
+                {name:"Александр Н.", text:"Все протоколы работают. Скорость не падает.", time:"2 часа назад", stars:5},
+                {name:"Валерия П.", text:"Наконец-то нормальный VPN без ежемесячной платы.", time:"вчера", stars:5},
+                {name:"Михаил С.", text:"Настроили удалённо за 5 минут. Спасибо менеджеру!", time:"3 дня назад", stars:5},
+                {name:"Ирина К.", text:"Работает с Netflix и YouTube. География не ограничивает.", time:"6 дней назад", stars:5}
+            ],
+            spotify: [
+                {name:"Григорий В.", text:"Бесконечные скипы реально работают. HQ звук топ!", time:"1 час назад", stars:5},
+                {name:"Алёна М.", text:"Оффлайн режим спасает в поездках. Все плейлисты доступны.", time:"вчера", stars:5},
+                {name:"Евгений П.", text:"Никакой рекламы между треками. Наконец-то!", time:"2 дня назад", stars:5},
+                {name:"Вероника С.", text:"Лучше чем официальная подписка. Экономия 200₽ в месяц.", time:"4 дня назад", stars:5}
+            ],
+            wolfram: [
+                {name:"Борис К.", text:"Решает интегралы за секунды. Шаги решения очень помогают.", time:"3 часа назад", stars:5},
+                {name:"Людмила Р.", text:"Оффлайн база знаний — находит даже редкие формулы.", time:"вчера", stars:5},
+                {name:"Станислав М.", text:"Использую для проверки домашки. Всегда точные ответы.", time:"3 дня назад", stars:4},
+                {name:"Галина В.", text:"От физики до химии — всё решает. Незаменимый инструмент.", time:"5 дней назад", stars:5}
+            ],
+            procreate: [
+                {name:"Дарья Н.", text:"Все кисти разблокированы, рисую на iPad и iPhone. Кайф!", time:"2 часа назад", stars:5},
+                {name:"Илья П.", text:"Экспорт в PSD работает без потерь. Профессиональный инструмент.", time:"вчера", stars:5},
+                {name:"Ксения А.", text:"Слои не ограничены, даже на старом iPhone не лагает.", time:"3 дня назад", stars:5},
+                {name:"Максим Г.", text:"Лучшее приложение для скетчей. Обожаю!", time:"неделю назад", stars:5}
+            ],
+            lumafusion: [
+                {name:"Артём В.", text:"6 треков хватает для любого проекта. 4K экспорт плавный.", time:"4 часа назад", stars:5},
+                {name:"Полина М.", text:"Хромакей работает лучше чем в некоторых десктопных редакторах.", time:"вчера", stars:5},
+                {name:"Кирилл С.", text:"Цветокоррекция на уровне. Монтирую ролики прямо на телефоне.", time:"2 дня назад", stars:5},
+                {name:"Елизавета К.", text:"Интерфейс интуитивный. Освоила за один вечер.", time:"5 дней назад", stars:4}
+            ],
+            goodnotes: [
+                {name:"Тимур А.", text:"Рукописный ввод распознаёт идеально. Планировщики красивые.", time:"1 час назад", stars:5},
+                {name:"Светлана О.", text:"PDF-аннотации спасают на лекциях. Синхронизация работает.", time:"вчера", stars:5},
+                {name:"Антон Г.", text:"Заменил все тетради на Goodnotes. Удобно искать по записям.", time:"3 дня назад", stars:5},
+                {name:"Марина Д.", text:"Шаблоны планировщиков бесплатные. Оформляю ежедневник.", time:"4 дня назад", stars:5}
+            ]
+        };
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const isDark = document.body.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            document.getElementById('theme-toggle').textContent = isDark ? '☀️' : '🌙';
+        }
+        (function initTheme() {
+            const saved = localStorage.getItem('theme');
+            if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.body.classList.add('dark');
+                document.getElementById('theme-toggle').textContent = '☀️';
+            }
+        })();
+
+        function formatNum(n) { if (n >= 1000000) return (n/1000000).toFixed(1) + 'M'; if (n >= 1000) return (n/1000).toFixed(1) + 'K'; return n.toString(); }
+        function getStarString(count) { return '★'.repeat(count) + '☆'.repeat(5 - count); }
+
+        function getAvatar(name) {
+            const colors = ['1abc9c','2ecc71','3498db','9b59b6','34495e','16a085','27ae60','2980b9','8e44ad','2c3e50','f1c40f','e67e22','e74c3c','95a5a6'];
+            const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            const color = colors[[...name].reduce((a, b) => a + b.charCodeAt(0), 0) % colors.length];
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><rect width="128" height="128" fill="#${color}" rx="64"/><text x="64" y="82" font-family="-apple-system,BlinkMacSystemFont,sans-serif" font-size="52" font-weight="bold" fill="#fff" text-anchor="middle">${initials}</text></svg>`;
+            return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+        }
+
+        function createScreenFallback(appName, label) {
+            const hues = {minecraft:110,geometry:195,gta:120,stardew:25,deadcells:280,balatro:30,ayugram:200,telegram:200,shadowrocket:320,spotify:140,wolfram:25,procreate:330,lumafusion:260,goodnotes:35};
+            const hue = hues[appName] || 210;
+            return `<div class="ss-item" style="background:linear-gradient(135deg,hsl(${hue},60%,92%),hsl(${hue},60%,85%));display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:hsl(${hue},80%,25%);font-weight:600;font-size:0.9rem;text-align:center;padding:16px;">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                <div style="line-height:1.3;">${appName}<br><span style="font-size:0.75rem;opacity:0.7;">${label}</span></div>
+            </div>`;
+        }
+
+        function initDetail() {
+            const p = new URLSearchParams(window.location.search);
+            const appKey = p.get('app') || 'minecraft';
+            const data = appsData[appKey];
+            if (!data) {
+                document.getElementById('detail-page').innerHTML = '<h2 style="text-align:center;padding:40px;">Приложение не найдено</h2><a href="index.html" class="back-btn">← Назад</a>';
+                return;
+            }
+
+            document.getElementById('detail-name').textContent = data.name;
+            document.getElementById('detail-category').textContent = data.cat + ' • ' + data.size + ' • Версия ' + data.ver;
+            document.getElementById('detail-rating').textContent = '★ ' + data.rating;
+            document.getElementById('detail-desc-text').textContent = data.desc;
+            document.getElementById('detail-features').innerHTML = data.features.map(f => `<span class="feature-tag">${f}</span>`).join('');
+
+            const iconContainer = document.getElementById('detail-icon');
+            const ssContainer = document.getElementById('detail-screenshots');
+            iconContainer.innerHTML = '';
+            ssContainer.innerHTML = '';
+
+            if (data.iconUrl) {
+                const img = document.createElement('img');
+                img.src = data.iconUrl;
+                img.width = 100; img.height = 100;
+                img.style.borderRadius = '24px';
+                img.style.objectFit = 'cover';
+                img.style.boxShadow = '0 4px 16px rgba(0,0,0,0.15)';
+                img.onerror = function() {
+                    iconContainer.innerHTML = data.icon;
+                    iconContainer.style.fontSize = '48px';
+                    iconContainer.style.background = 'var(--bg)';
+                };
+                iconContainer.appendChild(img);
+            } else {
+                iconContainer.textContent = data.icon;
+                iconContainer.style.fontSize = '48px';
+                iconContainer.style.background = 'var(--bg)';
+            }
+
+            if (data.screens && data.screens.length > 0) {
+                data.screens.forEach((src, i) => {
+                    const wrap = document.createElement('div');
+                    wrap.className = 'ss-item';
+                    wrap.style.minWidth = '160px';
+                    wrap.style.height = '320px';
+                    wrap.style.borderRadius = '16px';
+                    wrap.style.overflow = 'hidden';
+                    wrap.style.border = '1px solid var(--border)';
+                    wrap.style.flexShrink = '0';
+                    
+                    const img = document.createElement('img');
+                    img.src = src;
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    img.style.display = 'block';
+                    img.loading = 'lazy';
+                    img.onerror = function() {
+                        wrap.outerHTML = createScreenFallback(data.name, 'Screen ' + (i+1));
+                    };
+                    
+                    wrap.appendChild(img);
+                    ssContainer.appendChild(wrap);
+                });
+            } else {
+                for (let i = 1; i <= 3; i++) {
+                    ssContainer.innerHTML += createScreenFallback(data.name, 'Screen ' + i);
+                }
+            }
+
+            const dlKey = 'dl_' + appKey;
+            let dl = localStorage.getItem(dlKey);
+            if (!dl) { dl = Math.floor(Math.random() * 45000) + 5000; localStorage.setItem(dlKey, dl); }
+            document.getElementById('detail-downloads').textContent = '⬇️ ' + formatNum(parseInt(dl));
+
+            const appReviews = reviewsDB[appKey] || [];
+            document.getElementById('reviews-list').innerHTML = appReviews.map(rev => {
+                const avatar = getAvatar(rev.name);
+                return `<div class="review-card"><img src="${avatar}" class="review-avatar" loading="lazy"><div class="review-body"><div class="review-header"><b>${rev.name}</b><span class="review-time">${rev.time}</span></div><div class="review-stars">${getStarString(rev.stars)}</div><div class="review-text">${rev.text}</div></div></div>`;
+            }).join('');
+
+            const savedRef = localStorage.getItem('ref');
+            const savedSig = localStorage.getItem('sig');
+            document.getElementById('detail-get-btn').href = savedRef && savedSig ? `contact-v2.html?ref=${encodeURIComponent(savedRef)}&sig=${encodeURIComponent(savedSig)}` : 'contact-v2.html';
+        }
+        initDetail();
+    </script>
+</body>
+</html>
