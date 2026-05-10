@@ -1,304 +1,235 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Бесплатные iOS приложения и игры — скачай без App Store">
-  <meta property="og:title" content="iOS-Game — Free Apps">
-  <meta property="og:description" content="Бесплатные iOS приложения и игры">
-  <meta property="og:image" content="https://cdn-icons-png.flaticon.com/512/831/831276.png">
-  <title>App Store Free — iOS Apps & Games</title>
-  <link rel="stylesheet" href="style.css?v=4">
-  <link rel="manifest" href="manifest.json">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Бесплатные iOS приложения и игры — скачай без App Store">
+    <title>App Store Free — iOS Apps & Games</title>
+    <link rel="stylesheet" href="style.css?v=10">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        .app-icon img { width:100%; height:100%; object-fit:cover; border-radius:14px; display:block; }
+        .banner-icon img { width:64px; height:64px; border-radius:16px; object-fit:cover; }
+    </style>
 </head>
 <body>
-  <div class="app-store">
-    <!-- Header -->
-    <header class="store-header">
-      <div class="header-top">
-        <div class="logo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-            <path d="M2 17l10 5 10-5"/>
-            <path d="M2 12l10 5 10-5"/>
-          </svg>
-          <span>App Store</span>
+    <div id="cookie-banner" class="cookie-banner">
+        <div class="cookie-content">
+            <span>🍪 Мы используем cookies для аналитики и персонализации.</span>
+            <button onclick="acceptCookies()">Принять</button>
         </div>
-        <div class="live-badge">
-          <span class="pulse"></span>
-          <span id="online-count">2,847 онлайн</span>
+    </div>
+    <div class="app-store">
+        <header class="store-header">
+            <div class="header-top">
+                <div class="logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+                    </svg>
+                    <span>App Store</span>
+                </div>
+                <div class="header-actions">
+                    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Сменить тему">🌙</button>
+                    <div class="live-badge"><span class="pulse"></span><span id="online-count">2,847 онлайн</span></div>
+                </div>
+            </div>
+            <h1>Бесплатные приложения</h1>
+            <p class="subtitle">Скачивай платные iOS приложения бесплатно. Без jailbreak.</p>
+        </header>
+        <div class="live-ticker" id="live-ticker"><div class="ticker-track" id="ticker-track"></div></div>
+        <div class="search-bar">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input type="text" id="search-input" placeholder="Поиск приложений..." oninput="filterApps()">
         </div>
-      </div>
-      <h1>Бесплатные приложения</h1>
-      <p class="subtitle">Скачивай платные iOS приложения бесплатно. Без jailbreak.</p>
-    </header>
-
-    <!-- Featured Banner -->
-    <section class="featured-banner">
-      <div class="banner-content">
-        <span class="badge">🔥 Топ недели</span>
-        <h2>Minecraft + 100 модов</h2>
-        <p>Обычно 749 ₽ — сейчас бесплатно</p>
-        <a href="contact-v2.html" class="banner-btn">Скачать</a>
-      </div>
-      <div class="banner-icon">⛏️</div>
-    </section>
-
-    <!-- Categories -->
-    <section class="category">
-      <div class="category-header">
-        <h2>🎮 Игры</h2>
-        <a href="#" class="see-all">Все</a>
-      </div>
-      <div class="apps-grid">
-        <a href="contact-v2.html" class="app-card">
-          <div class="app-icon minecraft">⛏️</div>
-          <div class="app-info">
-            <h3>Minecraft</h3>
-            <p>Sandbox</p>
-            <div class="app-meta">
-              <span class="rating">★ 4.9</span>
-              <span class="price free">Бесплатно</span>
+        <div class="trust-badges">
+            <div class="trust-item"><span>🔒</span> Защищенное соединение</div>
+            <div class="trust-item"><span>✅</span> Проверено на вирусы</div>
+            <div class="trust-item"><span>🍎</span> Совместимо с iPhone</div>
+            <div class="trust-item"><span>⚡</span> Установка за 2 минуты</div>
+        </div>
+        <section class="featured-banner">
+            <div class="banner-content">
+                <span class="badge">🔥 Топ недели</span>
+                <h2>Minecraft + 100 модов</h2>
+                <p>Обычно 749 ₽ — сейчас бесплатно</p>
+                <div class="countdown" id="countdown">⏳ Акция закончится через: <span>04:59:59</span></div>
+                <a href="detail.html?app=minecraft" class="banner-btn">Скачать</a>
             </div>
-          </div>
-          <button class="get-btn">GET</button>
-        </a>
-
-        <a href="contact-v2.html" class="app-card">
-          <div class="app-icon geometry">🔷</div>
-          <div class="app-info">
-            <h3>Geometry Dash</h3>
-            <p>Ритм-экшен</p>
-            <div class="app-meta">
-              <span class="rating">★ 4.8</span>
-              <span class="price free">Бесплатно</span>
+            <div class="banner-icon" id="banner-icon"><img src="https://wallpapers.com/images/thumbnail/minecraft_-pocket_-edition_-logo-k3gtu1oy3tgrqii8.webp" alt="Minecraft" onerror="this.style.display='none'; this.parentElement.textContent='⛏️';"></div>
+        </section>
+        <section class="category" data-category="games">
+            <div class="category-header"><h2>🎮 Игры</h2><a href="#" class="see-all">Все</a></div>
+            <div class="apps-grid">
+                <a href="detail.html?app=minecraft" class="app-card" data-name="minecraft"><div class="app-icon"><img src="https://wallpapers.com/images/thumbnail/minecraft_-pocket_-edition_-logo-k3gtu1oy3tgrqii8.webp" alt="" loading="lazy" onerror="this.style.display='none'; this.parentElement.textContent='⛏️'; this.parentElement.style.fontSize='24px';"></div><div class="app-info"><h3>Minecraft</h3><p>Sandbox</p><div class="app-meta"><span class="rating">★ 4.9</span><span class="downloads-counter" data-app="minecraft">⬇️ ...</span></div></div><button class="get-btn">GET</button></a>
+                <a href="detail.html?app=geometry" class="app-card" data-name="geometry"><div class="app-icon"><img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/5a/d5/97/5ad5971d-b8ea-d82f-415f-f69be6bde65c/AppIcon-1x_U007emarketing-0-11-0-85-220-0.png/256x256bb.jpg" alt="" loading="lazy" onerror="this.style.display='none'; this.parentElement.textContent='🔷'; this.parentElement.style.fontSize='24px';"></div><div class="app-info"><h3>Geometry Dash</h3><p>Ритм-экшен</p><div class="app-meta"><span class="rating">★ 4.8</span><span class="downloads-counter" data-app="geometry">⬇️ ...</span></div></div><button class="get-btn">GET</button></a>
+                <a href="detail.html?app=gta" class="app-card" data-name="gta"><div class="app-icon"><img src="https://img.icons8.com/ios7/1200/san-andreas.jpg" alt="" loading="lazy" onerror="this.style.display='none'; this.parentElement.textContent='🌴'; this.parentElement.style.fontSize='24px';"></div><div class="app-info"><h3>GTA: San Andreas</h3><p>Экшен</p><div class="app-meta"><span class="rating">★ 4.7</span><span class="downloads-counter" data-app="gta">⬇️ ...</span></div></div><button class="get-btn">GET</button></a>
+                <a href="detail.html?app=stardew" class="app-card" data-name="stardew"><div class="app-icon"><img src="https://static.wikia.nocookie.net/logopedia/images/8/8e/Stardew_icon.png/revision/latest?cb=20260108212455" alt="" loading="lazy" onerror="this.style.display='none'; this.parentElement.textContent='🐔'; this.parentElement.style.fontSize='24px';"></div><div class="app-info"><h3>Stardew Valley</h3><p>Ферма RPG</p><div class="app-meta"><span class="rating">★ 4.9</span><span class="downloads-counter" data-app="stardew">⬇️ ...</span></div></div><button class="get-btn">GET</button></a>
+                <a href="detail.html?app=deadcells" class="app-card" data-name="deadcells"><div class="app-icon"><img src="https://cdn.iphoneincanada.ca/wp-content/uploads/2019/08/icon.png" alt="" loading="lazy" onerror="this.style.display='none'; this.parentElement.textContent='⚔️'; this.parentElement.style.fontSize='24px';"></div><div class="app-info"><h3>Dead Cells</h3><p>Roguelike</p><div class="app-meta"><span class="rating">★ 4.8</span><span class="downloads-counter" data-app="deadcells">⬇️ ...</span></div></div><button class="get-btn">GET</button></a>
+                <a href="detail.html?app=balatro" class="app-card" data-name="balatro"><div class="app-icon"><img src="https://cdn2.steamgriddb.com/icon/6c3ee6dcff80d34567671bce66bc911e/32/256x256.png" alt="" loading="lazy" onerror="this.style.display='none'; this.parentElement.textContent='🃏'; this.parentElement.style.fontSize='24px';"></div><div class="app-info"><h3>Balatro</h3><p>Покер</p><div class="app-meta"><span class="rating">★ 4.9</span><span class="downloads-counter" data-app="balatro">⬇️ ...</span></div></div><button class="get-btn">GET</button></a>
             </div>
-          </div>
-          <button class="get-btn">GET</button>
-        </a>
-
-        <a href="contact-v2.html" class="app-card">
-          <div class="app-icon gta">🌴</div>
-          <div class="app-info">
-            <h3>GTA: San Andreas</h3>
-            <p>Экшен</p>
-            <div class="app-meta">
-              <span class="rating">★ 4.7</span>
-              <span class="price free">Бесплатно</span>
+        </section>
+        <section class="category" data-category="messengers">
+            <div class="category-header"><h2>💬 Мессенджеры</h2><a href="#" class="see-all">Все</a></div>
+            <div class="apps-grid">
+                <a href="detail.html?app=ayugram" class="app-card" data-name="ayugram"><div class="app-icon"><img src="https://avatars.githubusercontent.com/u/131606289?s=280&v=4" alt="" loading="lazy" onerror="this.style.display='none'; this.parentElement.textContent='✈️'; this.parentElement.style.fontSize='24px';"></div><div class="app-info"><h3>AyuGram</h3><p>Telegram клиент</p><div class="app-meta"><span class="rating">★ 4.6</span><span class="downloads-counter" data-app="ayugram">⬇️ ...</span></div></div><button class="get-btn">GET</button></a>
+                <a href="detail.html?app=telegram" class="app-card" data-name="telegram"><div class="app-icon"><img src="https://assets.streamlinehq.com/image/private/w_240,h_240,ar_1/f_auto/v1/icons/ios-icons/telegram-zsefsxqok2s3wcnwz2t8yl.png/telegram-frk4xndvnapf833cx6csyi.png?_a=DATAiZAAZAA0" alt="" loading="lazy" onerror="this.style.display='none'; this.parentElement.textContent='🔒'; this.parentElement.style.fontSize='24px';"></div><div class="app-info"><h3>Telegram Mods</h3><p>Модификации</p><div class="app-meta"><span class="rating">★ 4.5</span><span class="downloads-counter" data-app="telegram">⬇️ ...</span></div></div><button class="get-btn">GET</button></a>
             </div>
-          </div>
-          <button class="get-btn">GET</button>
-        </a>
-
-        <a href="contact-v2.html" class="app-card">
-          <div class="app-icon stardew">🐔</div>
-          <div class="app-info">
-            <h3>Stardew Valley</h3>
-            <p>Ферма RPG</p>
-            <div class="app-meta">
-              <span class="rating">★ 4.9</span>
-              <span class="price free">Бесплатно</span>
+        </section>
+        <section class="category" data-category="tools">
+            <div class="category-header"><h2>🛠 Инструменты</h2><a href="#" class="see-all">Все</a></div>
+            <div class="apps-grid">
+                <a href="detail.html?app=shadowrocket" class="app-card" data-name="shadowrocket"><div class="app-icon"><img src="https://custom-images.strikinglycdn.com/res/hrscywv4p/image/upload/c_limit,fl_lossy,h_300,w_300,f_auto,q_100/8422457/161884_342068.png" alt="" loading="lazy" onerror="this.style.display='none'; this.parentElement.textContent='🚀'; this.parentElement.style.fontSize='24px';"></div><div class="app-info"><h3>Shadowrocket</h3><p>VPN прокси</p><div class="app-meta"><span class="rating">★ 4.7</span><span class="downloads-counter" data-app="shadowrocket">⬇️ ...</span></div></div><button class="get-btn">GET</button></a>
+                <a href="detail.html?app=spotify" class="app-card" data-name="spotify"><div class="app-icon"><img src="https://static.vecteezy.com/system/resources/previews/017/395/387/non_2x/spotify-mobile-apps-icon-free-png.png" alt="" loading="lazy" onerror="this.style.display='none'; this.parentElement.textContent='🎵'; this.parentElement.style.fontSize='24px';"></div><div class="app-info"><h3>Spotify++</h3><p>Premium</p><div class="app-meta"><span class="rating">★ 4.8</span><span class="downloads-counter" data-app="spotify">⬇️ ...</span></div></div><button class="get-btn">GET</button></a>
+                <a href="detail.html?app=wolfram" class="app-card" data-name="wolfram"><div class="app-icon"><img src="https://img.icons8.com/color/512w/wolfram-alpha.png" alt="" loading="lazy" onerror="this.style.display='none'; this.parentElement.textContent='🔢'; this.parentElement.style.fontSize='24px';"></div><div class="app-info"><h3>WolframAlpha</h3><p>Вычисления</p><div class="app-meta"><span class="rating">★ 4.6</span><span class="downloads-counter" data-app="wolfram">⬇️ ...</span></div></div><button class="get-btn">GET</button></a>
             </div>
-          </div>
-          <button class="get-btn">GET</button>
-        </a>
-
-        <a href="contact-v2.html" class="app-card">
-          <div class="app-icon deadcells">⚔️</div>
-          <div class="app-info">
-            <h3>Dead Cells</h3>
-            <p>Roguelike</p>
-            <div class="app-meta">
-              <span class="rating">★ 4.8</span>
-              <span class="price free">Бесплатно</span>
+        </section>
+        <section class="category" data-category="creative">
+            <div class="category-header"><h2>🎨 Творчество</h2><a href="#" class="see-all">Все</a></div>
+            <div class="apps-grid">
+                <a href="detail.html?app=procreate" class="app-card" data-name="procreate"><div class="app-icon"><img src="https://cdn.jim-nielsen.com/ios/512/procreate-pocket-2018-08-03.png?rf=1024" alt="" loading="lazy" onerror="this.style.display='none'; this.parentElement.textContent='🎨'; this.parentElement.style.fontSize='24px';"></div><div class="app-info"><h3>Procreate Pocket</h3><p>Рисование</p><div class="app-meta"><span class="rating">★ 4.9</span><span class="downloads-counter" data-app="procreate">⬇️ ...</span></div></div><button class="get-btn">GET</button></a>
+                <a href="detail.html?app=lumafusion" class="app-card" data-name="lumafusion"><div class="app-icon"><img src="https://profilmmakerapps.com/images/lumafusion.jpg" alt="" loading="lazy" onerror="this.style.display='none'; this.parentElement.textContent='🎬'; this.parentElement.style.fontSize='24px';"></div><div class="app-info"><h3>LumaFusion</h3><p>Видео</p><div class="app-meta"><span class="rating">★ 4.8</span><span class="downloads-counter" data-app="lumafusion">⬇️ ...</span></div></div><button class="get-btn">GET</button></a>
+                <a href="detail.html?app=goodnotes" class="app-card" data-name="goodnotes"><div class="app-icon"><img src="https://www.iphonejd.com/wp-content/uploads/2023/08/6a010535fde333970c02b751ae6870200c.png" alt="" loading="lazy" onerror="this.style.display='none'; this.parentElement.textContent='📝'; this.parentElement.style.fontSize='24px';"></div><div class="app-info"><h3>Goodnotes 6</h3><p>Заметки</p><div class="app-meta"><span class="rating">★ 4.7</span><span class="downloads-counter" data-app="goodnotes">⬇️ ...</span></div></div><button class="get-btn">GET</button></a>
             </div>
-          </div>
-          <button class="get-btn">GET</button>
-        </a>
+        </section>
+        <div class="no-results" id="no-results" style="display:none;"><div class="no-results-icon">🔍</div><h3>Приложение не найдено</h3><p>Попробуйте другой запрос</p></div>
+        <footer class="store-footer"><p>© 2025 App Store Free. Все права защищены.</p><p class="disclaimer">Для установки требуется связаться с менеджером. Все товарные знаки принадлежат их владельцам.</p></footer>
+    </div>
+    <script>
+        // REF SAVE
+        const params = new URLSearchParams(window.location.search);
+        const ref = params.get('ref');
+        const sig = params.get('sig');
+        if (ref) { try { localStorage.setItem('ref', ref); if (sig) localStorage.setItem('sig', sig); } catch (e) {} }
 
-        <a href="contact-v2.html" class="app-card">
-          <div class="app-icon balatro">🃏</div>
-          <div class="app-info">
-            <h3>Balatro</h3>
-            <p>Покер</p>
-            <div class="app-meta">
-              <span class="rating">★ 4.9</span>
-              <span class="price free">Бесплатно</span>
-            </div>
-          </div>
-          <button class="get-btn">GET</button>
-        </a>
-      </div>
-    </section>
+        // THEME
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const isDark = document.body.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            document.getElementById('theme-toggle').textContent = isDark ? '☀️' : '🌙';
+        }
+        (function initTheme() {
+            const saved = localStorage.getItem('theme');
+            if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.body.classList.add('dark');
+                const btn = document.getElementById('theme-toggle');
+                if (btn) btn.textContent = '☀️';
+            }
+        })();
 
-    <section class="category">
-      <div class="category-header">
-        <h2>💬 Мессенджеры</h2>
-        <a href="#" class="see-all">Все</a>
-      </div>
-      <div class="apps-grid">
-        <a href="contact-v2.html" class="app-card">
-          <div class="app-icon ayugram">✈️</div>
-          <div class="app-info">
-            <h3>AyuGram</h3>
-            <p>Telegram клиент</p>
-            <div class="app-meta">
-              <span class="rating">★ 4.6</span>
-              <span class="price free">Бесплатно</span>
-            </div>
-          </div>
-          <button class="get-btn">GET</button>
-        </a>
+        // COOKIES
+        function acceptCookies() {
+            localStorage.setItem('cookies_accepted', '1');
+            document.getElementById('cookie-banner').style.display = 'none';
+        }
+        if (localStorage.getItem('cookies_accepted')) document.getElementById('cookie-banner').style.display = 'none';
 
-        <a href="contact-v2.html" class="app-card">
-          <div class="app-icon telegram">🔒</div>
-          <div class="app-info">
-            <h3>Telegram Mods</h3>
-            <p>Модификации</p>
-            <div class="app-meta">
-              <span class="rating">★ 4.5</span>
-              <span class="price free">Бесплатно</span>
-            </div>
-          </div>
-          <button class="get-btn">GET</button>
-        </a>
-      </div>
-    </section>
+        // COUNTERS
+        const appNames = ['minecraft','geometry','gta','stardew','deadcells','balatro','ayugram','telegram','shadowrocket','spotify','wolfram','procreate','lumafusion','goodnotes'];
+        function formatNum(n) { if (n >= 1000000) return (n/1000000).toFixed(1) + 'M'; if (n >= 1000) return (n/1000).toFixed(1) + 'K'; return n.toString(); }
+        function initCounters() {
+            appNames.forEach(app => {
+                const key = 'dl_' + app;
+                let val = localStorage.getItem(key);
+                if (!val) { val = Math.floor(Math.random() * 45000) + 5000; localStorage.setItem(key, val); }
+                else { val = parseInt(val) + Math.floor(Math.random() * 3); localStorage.setItem(key, val); }
+                const el = document.querySelector(`.downloads-counter[data-app="${app}"]`);
+                if (el) el.textContent = '⬇️ ' + formatNum(parseInt(val));
+            });
+        }
+        initCounters(); setInterval(initCounters, 30000);
 
-    <section class="category">
-      <div class="category-header">
-        <h2>🛠 Инструменты</h2>
-        <a href="#" class="see-all">Все</a>
-      </div>
-      <div class="apps-grid">
-        <a href="contact-v2.html" class="app-card">
-          <div class="app-icon shadowrocket">🚀</div>
-          <div class="app-info">
-            <h3>Shadowrocket</h3>
-            <p>VPN прокси</p>
-            <div class="app-meta">
-              <span class="rating">★ 4.7</span>
-              <span class="price free">Бесплатно</span>
-            </div>
-          </div>
-          <button class="get-btn">GET</button>
-        </a>
+        // SEARCH
+        function filterApps() {
+            const q = document.getElementById('search-input').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.app-card');
+            const cats = document.querySelectorAll('.category');
+            let hasAny = false;
+            cards.forEach(card => {
+                const name = card.querySelector('h3').textContent.toLowerCase();
+                const cat = card.querySelector('p').textContent.toLowerCase();
+                const match = name.includes(q) || cat.includes(q);
+                card.style.display = match ? 'flex' : 'none';
+                if (match) hasAny = true;
+            });
+            cats.forEach(cat => {
+                const visible = cat.querySelectorAll('.app-card[style*="flex"]').length;
+                cat.style.display = visible ? 'block' : 'none';
+            });
+            document.getElementById('no-results').style.display = hasAny ? 'none' : 'block';
+        }
 
-        <a href="contact-v2.html" class="app-card">
-          <div class="app-icon spotify">🎵</div>
-          <div class="app-info">
-            <h3>Spotify++</h3>
-            <p>Premium</p>
-            <div class="app-meta">
-              <span class="rating">★ 4.8</span>
-              <span class="price free">Бесплатно</span>
-            </div>
-          </div>
-          <button class="get-btn">GET</button>
-        </a>
+        // TICKER
+        const cities = [
+        "Москва", "Санкт-Петербург", "Киев", "Минск", "Алматы", "Ташкент",
+        "Ереван", "Тбилиси", "Новосибирск", "Казань",        // исходные
+        "Нижний Новгород", "Екатеринбург", "Самара", "Омск", "Челябинск",
+        "Ростов-на-Дону", "Уфа", "Волгоград", "Пермь", "Красноярск",
+        "Воронеж", "Саратов", "Краснодар", "Тольятти", "Ижевск",
+        "Барнаул", "Ульяновск", "Иркутск", "Хабаровск", "Владивосток",
+        "Ярославль", "Махачкала", "Томск", "Оренбург", "Кемерово",
+        "Новокузнецк", "Рязань", "Астрахань", "Пенза", "Калининград",
+        "Сочи", "Севастополь", "Белгород", "Курск", "Ставрополь"
+        ];
 
-        <a href="contact-v2.html" class="app-card">
-          <div class="app-icon wolfram">🔢</div>
-          <div class="app-info">
-            <h3>WolframAlpha</h3>
-            <p>Вычисления</p>
-            <div class="app-meta">
-              <span class="rating">★ 4.6</span>
-              <span class="price free">Бесплатно</span>
-            </div>
-          </div>
-          <button class="get-btn">GET</button>
-        </a>
-      </div>
-    </section>
+        const names = [
+        "Алексей", "Иван", "Дмитрий", "Артём", "Максим", "Егор",
+        "Кирилл", "Никита", "Михаил", "Даниил",          // исходные
+        "Александр", "Сергей", "Андрей", "Владимир", "Роман",
+        "Денис", "Павел", "Евгений", "Арсений", "Тимофей",
+        "Матвей", "Глеб", "Владислав", "Ярослав", "Илья",
+        "Степан", "Антон", "Виктор", "Николай", "Григорий",
+        "Борис", "Вадим", "Олег", "Игорь", "Константин",
+        "Пётр", "Семён", "Станислав", "Валерий", "Георгий"
+        ];
+        const appsList = [
+        "Minecraft",
+        "GTA: SA",
+        "Spotify++",
+        "Shadowrocket",
+        "Procreate",
+        "Geometry Dash",
+        "Dead Cells",
+        "Balatro",
+        "Stardew Valley",
+        "AyuGram",
+        "Telegram Mods",
+        "WolframAlpha",
+        "LumaFusion",
+        "Goodnotes 6"
+        ];
+        function addTickerItem() {
+            const track = document.getElementById('ticker-track');
+            const name = names[Math.floor(Math.random() * names.length)];
+            const city = cities[Math.floor(Math.random() * cities.length)];
+            const app = appsList[Math.floor(Math.random() * appsList.length)];
+            track.innerHTML = `<span class="ticker-item">👤 <b>${name}</b> из ${city} только что скачал <b>${app}</b></span>`;
+        }
+        addTickerItem(); setInterval(addTickerItem, 5000);
 
-    <section class="category">
-      <div class="category-header">
-        <h2>🎨 Творчество</h2>
-        <a href="#" class="see-all">Все</a>
-      </div>
-      <div class="apps-grid">
-        <a href="contact-v2.html" class="app-card">
-          <div class="app-icon procreate">🎨</div>
-          <div class="app-info">
-            <h3>Procreate Pocket</h3>
-            <p>Рисование</p>
-            <div class="app-meta">
-              <span class="rating">★ 4.9</span>
-              <span class="price free">Бесплатно</span>
-            </div>
-          </div>
-          <button class="get-btn">GET</button>
-        </a>
+        // COUNTDOWN
+        function updateCountdown() {
+            const el = document.querySelector('#countdown span');
+            if (!el) return;
+            let end = localStorage.getItem('countdown_end');
+            if (!end) { end = Date.now() + (5 * 60 * 60 * 1000); localStorage.setItem('countdown_end', end); }
+            const diff = end - Date.now();
+            if (diff <= 0) { end = Date.now() + (5 * 60 * 60 * 1000); localStorage.setItem('countdown_end', end); }
+            const d = new Date(Math.max(0, end - Date.now()));
+            const hh = String(Math.floor(d / 3600000)).padStart(2,'0');
+            const mm = String(Math.floor((d % 3600000) / 60000)).padStart(2,'0');
+            const ss = String(Math.floor((d % 60000) / 1000)).padStart(2,'0');
+            el.textContent = `${hh}:${mm}:${ss}`;
+        }
+        updateCountdown(); setInterval(updateCountdown, 1000);
 
-        <a href="contact-v2.html" class="app-card">
-          <div class="app-icon lumafusion">🎬</div>
-          <div class="app-info">
-            <h3>LumaFusion</h3>
-            <p>Видео</p>
-            <div class="app-meta">
-              <span class="rating">★ 4.8</span>
-              <span class="price free">Бесплатно</span>
-            </div>
-          </div>
-          <button class="get-btn">GET</button>
-        </a>
-
-        <a href="contact-v2.html" class="app-card">
-          <div class="app-icon goodnotes">📝</div>
-          <div class="app-info">
-            <h3>Goodnotes 6</h3>
-            <p>Заметки</p>
-            <div class="app-meta">
-              <span class="rating">★ 4.7</span>
-              <span class="price free">Бесплатно</span>
-            </div>
-          </div>
-          <button class="get-btn">GET</button>
-        </a>
-      </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="store-footer">
-      <p>© 2025 App Store Free. Все права защищены.</p>
-      <p class="disclaimer">Для установки требуется связаться с менеджером. Все товарные знаки принадлежат их владельцам.</p>
-    </footer>
-  </div>
-
-  <script>
-    // Save ref
-    const params = new URLSearchParams(window.location.search);
-    const ref = params.get('ref');
-    const sig = params.get('sig');
-    if (ref) {
-      try {
-        localStorage.setItem('ref', ref);
-        if (sig) localStorage.setItem('sig', sig);
-      } catch (e) {
-        console.log('localStorage unavailable');
-      }
-    }
-
-    // Update links with ref
-    document.querySelectorAll('.app-card').forEach(card => {
-      const savedRef = localStorage.getItem('ref');
-      const savedSig = localStorage.getItem('sig');
-      if (savedRef && savedSig) {
-        card.href = 'contact-v2.html?ref=' + encodeURIComponent(savedRef) + '&sig=' + encodeURIComponent(savedSig);
-      }
-    });
-
-    // Live counter
-    function updateCounter() {
-      const base = 2847;
-      const variation = Math.floor(Math.random() * 100);
-      const hour = new Date().getHours();
-      const count = base + variation + (hour * 12);
-      document.getElementById('online-count').textContent = count.toLocaleString('ru') + ' онлайн';
-    }
-    updateCounter();
-    setInterval(updateCounter, 15000);
-  </script>
+        // ONLINE
+        function updateOnline() {
+            const base = 2847, variation = Math.floor(Math.random() * 100);
+            const count = base + variation + (new Date().getHours() * 12);
+            document.getElementById('online-count').textContent = count.toLocaleString('ru') + ' онлайн';
+        }
+        updateOnline(); setInterval(updateOnline, 15000);
+    </script>
 </body>
 </html>
